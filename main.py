@@ -11,7 +11,10 @@
 # - Trail: +20 pts → 1 pt trail
 # - Square off: 3:25 PM
 # ============================================================
-
+import os
+os.environ['TZ'] = 'Asia/Kolkata'
+import time
+time.tzset()
 import datetime
 # NSE fetcher removed — NSE blocks all automated requests with 403.
 # VWAP is now calculated purely from Kotak REST volume deltas (most accurate).
