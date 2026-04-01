@@ -1384,8 +1384,7 @@ class NiftyOptionsAlgo:
                         and not subscribed):
                     self.subscribe_options()
                     subscribed = True
-                    print("  Market open — watching for signals from 9:40 AM
-")
+                    print("  Market open — watching for signals from 9:40 AM\\n")
                     self._start_hourly_strike_refresh()
 
                 # At 9:25 AM — drop to best 2 tokens (1 ITM CE + 1 ITM PE)
