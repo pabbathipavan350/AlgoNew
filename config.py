@@ -124,7 +124,7 @@ MIN_DELTA           = 0.80
 STRIKE_STEP         = 50
 IV_PCT              = 12.0
 RISK_FREE_RATE      = 0.065
-MIN_OI_THRESHOLD    = 500000   # Minimum open interest (5 lakh contracts)
+MIN_OI_THRESHOLD    = 1200000   # Minimum open interest (5 lakh contracts)
 
 # ── WebSocket ─────────────────────────────────────────────
 NIFTY_INDEX_TOKEN   = "26000"
