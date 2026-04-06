@@ -1,0 +1,79 @@
+name: run-algo
+
+on:
+  schedule:
+    - cron: '30 3 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  run-algo:
+    name: Run Main Script
+    runs-on: ubuntu-latest
+    environment: MyAlog
+    timeout-minutes: 390
+
+    env:
+      TZ: Asia/Kolkata
+      PYTHONUNBUFFERED: "1"
+      KOTAK_CONSUMER_KEY:    ${{ secrets.KOTAK_CONSUMER_KEY }}
+      KOTAK_CONSUMER_SECRET: ${{ secrets.KOTAK_CONSUMER_SECRET }}
+      KOTAK_MOBILE_NUMBER:   ${{ secrets.KOTAK_MOBILE_NUMBER }}
+      KOTAK_UCC:             ${{ secrets.KOTAK_UCC }}
+      KOTAK_MPIN:            ${{ secrets.KOTAK_MPIN }}
+      KOTAK_ENVIRONMENT:     ${{ secrets.KOTAK_ENVIRONMENT }}
+      TELEGRAM_BOT_TOKEN:    ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID:      ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore capital state
+        uses: actions/cache@v4
+        with:
+          path: capital.json
+          key: capital-state-${{ github.ref_name }}
+          restore-keys: |
+            capital-state-
+
+      - name: Prepare output folders
+        run: mkdir -p logs reports
+
+      - name: Run algo
+        run: python main.py
+        continue-on-error: true
+
+      - name: Flush logs
+        if: always()
+        run: |
+          mkdir -p logs reports
+          echo "--- workflow ended at $(date '+%Y-%m-%d %H:%M:%S %Z') ---" >> logs/workflow.log
+          echo "--- files saved ---" >> logs/workflow.log
+          ls -lh logs/ reports/ 2>/dev/null >> logs/workflow.log || true
+
+      - name: Upload logs and reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: algo-${{ github.run_number }}-${{ github.run_attempt }}
+          path: |
+            logs/
+            reports/
+            capital.json
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Save capital state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: capital.json
+          key: capital-state-${{ github.ref_name }}-${{ github.run_number }}
