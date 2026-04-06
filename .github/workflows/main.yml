@@ -15,14 +15,18 @@ jobs:
     env:
       TZ: Asia/Kolkata
       PYTHONUNBUFFERED: "1"
-      KOTAK_CONSUMER_KEY:    ${{ secrets.KOTAK_CONSUMER_KEY }}
+
+      KOTAK_CONSUMER_KEY: ${{ secrets.KOTAK_CONSUMER_KEY }}
       KOTAK_CONSUMER_SECRET: ${{ secrets.KOTAK_CONSUMER_SECRET }}
-      KOTAK_MOBILE_NUMBER:   ${{ secrets.KOTAK_MOBILE_NUMBER }}
-      KOTAK_UCC:             ${{ secrets.KOTAK_UCC }}
-      KOTAK_MPIN:            ${{ secrets.KOTAK_MPIN }}
-      KOTAK_ENVIRONMENT:     ${{ secrets.KOTAK_ENVIRONMENT }}
-      TELEGRAM_BOT_TOKEN:    ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      TELEGRAM_CHAT_ID:      ${{ secrets.TELEGRAM_CHAT_ID }}
+      KOTAK_MOBILE_NUMBER: ${{ secrets.KOTAK_MOBILE_NUMBER }}
+      KOTAK_UCC: ${{ secrets.KOTAK_UCC }}
+      KOTAK_MPIN: ${{ secrets.KOTAK_MPIN }}
+
+      # Force Kotak environment to PROD
+      KOTAK_ENVIRONMENT: "PROD"
+
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
       - name: Checkout code
@@ -34,7 +38,9 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Restore capital state
         uses: actions/cache@v4
