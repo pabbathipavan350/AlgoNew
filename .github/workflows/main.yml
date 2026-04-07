@@ -2,7 +2,7 @@ name: run-algo
 
 on:
   schedule:
-    - cron: '30 3 * * 1-5'
+    - cron: '35 3 * * 1-5'
   workflow_dispatch:
 
 jobs:
